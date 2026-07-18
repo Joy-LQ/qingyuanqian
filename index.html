@@ -430,6 +430,69 @@
   #musicBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
   #musicBtn.off { opacity: .4; box-shadow: none; }
 
+  /* ═══ 生日扉页 ═══ */
+  #birthdayCard {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background:
+      radial-gradient(ellipse at 50% 35%, #2A1015 0%, var(--bg) 75%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: opacity 1.4s ease;
+  }
+  #birthdayCard.gone { opacity: 0; pointer-events: none; }
+  .bc-inner {
+    padding: 40px 30px;
+    animation: fadeUp 1.6s ease both;
+  }
+  .bc-small {
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: rgba(232,213,168,.55);
+    margin-bottom: 26px;
+  }
+  .bc-name {
+    font-size: 64px;
+    letter-spacing: 22px;
+    text-indent: 22px;
+    color: var(--gold);
+    font-weight: 700;
+    text-shadow: 0 0 40px rgba(201,161,90,.5);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .bc-title {
+    font-size: 22px;
+    letter-spacing: 12px;
+    text-indent: 12px;
+    color: var(--gold-light);
+    margin-top: 14px;
+  }
+  .bc-line {
+    width: 150px; height: 1px;
+    margin: 26px auto;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .bc-text {
+    font-size: 15px;
+    line-height: 2.3;
+    letter-spacing: 2px;
+    color: rgba(232,213,168,.8);
+    margin-bottom: 22px;
+  }
+  .bc-sign {
+    font-size: 13px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    margin-bottom: 34px;
+  }
+  @media (max-width: 520px) {
+    .bc-name { font-size: 46px; letter-spacing: 16px; text-indent: 16px; }
+    .bc-text { font-size: 14px; }
+  }
+
   /* ═══ 手机排版：字大一档，整体收紧到一屏 ═══ */
   @media (max-width: 520px) {
     header { padding: 18px 16px 4px; }
@@ -461,6 +524,22 @@
 <body>
 
 <canvas id="dust"></canvas>
+
+<div id="birthdayCard">
+  <div class="bc-inner">
+    <div class="bc-small">谨 以 此 签 筒 · 贺</div>
+    <div class="bc-name">小 鱼</div>
+    <div class="bc-title">生 辰 快 乐</div>
+    <div class="bc-line"></div>
+    <div class="bc-text">
+      礼物迟到了几日——<br>
+      手工打造的签筒，工期向来不由人。<br>
+      此物为你一人所制，全世界仅此一座。
+    </div>
+    <div class="bc-sign">乔乔 &amp; 时晏 敬上</div>
+    <button class="gold" onclick="openCard()">启 签</button>
+  </div>
+</div>
 
 <header>
   <h1>情 缘 签</h1>
@@ -1019,6 +1098,20 @@ function toggleMusic() {
 document.addEventListener("pointerdown", ensureAudio);
 document.addEventListener("touchend", ensureAudio);
 document.addEventListener("click", ensureAudio);
+
+/* ═══════════ 生日扉页：首次登门才展示，之后直入签筒（?card=1 可再看） ═══════════ */
+
+(function initCard() {
+  const seen = localStorage.getItem("qyq_card_seen");
+  const force = new URLSearchParams(location.search).has("card");
+  if (seen && !force) document.getElementById("birthdayCard").classList.add("gone");
+})();
+
+function openCard() {
+  localStorage.setItem("qyq_card_seen", "1");
+  document.getElementById("birthdayCard").classList.add("gone");
+  ensureAudio();   /* 启签这一下正是手势，乐声随扉页揭开同时浮起 */
+}
 
 renderStart();
 </script>
