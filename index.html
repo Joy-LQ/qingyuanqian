@@ -1099,6 +1099,17 @@ document.addEventListener("pointerdown", ensureAudio);
 document.addEventListener("touchend", ensureAudio);
 document.addEventListener("click", ensureAudio);
 
+/* 页面切走/关闭就把乐停了——不然 iOS 会把它当播客在后台一直放 */
+let bgmWasPlaying = false;
+function hushBgm() {
+  if (!bgm.paused) { bgm.pause(); bgmWasPlaying = true; }
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) hushBgm();
+  else if (bgmWasPlaying && musicOn) { bgm.play().catch(() => {}); bgmWasPlaying = false; }
+});
+addEventListener("pagehide", hushBgm);
+
 /* ═══════════ 生日扉页：首次登门才展示，之后直入签筒（?card=1 可再看） ═══════════ */
 
 (function initCard() {
