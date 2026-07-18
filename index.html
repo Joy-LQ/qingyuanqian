@@ -754,7 +754,7 @@ function renderTable() {
   stage.innerHTML = `
     <div class="phase-tag">${phaseName}</div>
     <div class="card-wrap" onclick="flipCard()">
-      <div class="card" id="theCard">
+      <div class="card${c && c.revealed ? " flipped" : ""}" id="theCard">
         <div class="card-face-side card-back">
           <div class="ring"></div>
           <div class="seal">签</div>
@@ -777,6 +777,10 @@ function renderTable() {
       </div>
     </div>`;
   renderActions();
+  if (c && c.revealed) {
+    const m = document.getElementById("memoBox");
+    if (m) m.style.display = "block";
+  }
 }
 
 function renderActions() {
@@ -810,7 +814,8 @@ function renderActions() {
           <button class="gold" onclick="draw('plot')">抽 剧 情 签</button>
           <button class="gold" onclick="draw('mood')">抽 氛 围 签</button>
         </div>
-        <div class="note">一支签演十来轮，尽兴了再回来抽<br>抽到哪一签转折，天意自有安排</div>`;
+        <div class="note">一支签演十来轮，尽兴了再回来抽<br>抽到哪一签转折，天意自有安排</div>
+        <div class="btn-row" style="margin-top:4px"><button class="ghost" onclick="abandonGame()">弃 局 重 开</button></div>`;
     }
   }
 }
@@ -822,7 +827,7 @@ function renderPropCard() {
   stage.innerHTML = `
     <div class="phase-tag">道 具 环 节 · 天 意 赐 下 ${n} 件 · 第 ${i + 1} 件</div>
     <div class="card-wrap deal" onclick="flipProp()">
-      <div class="card" id="theCard">
+      <div class="card${p.revealed ? " flipped" : ""}" id="theCard">
         <div class="card-face-side card-back">
           <div class="ring"></div>
           <div class="seal">赐</div>
@@ -844,6 +849,11 @@ function renderPropCard() {
         <button class="ghost" onclick="saveMemo()">存 入 回 忆</button>
       </div>
     </div>`;
+  if (p.revealed) {
+    const m = document.getElementById("memoBox");
+    if (m) m.style.display = "block";
+    if (S.propHand.every(x => x.revealed)) showPropExit();
+  }
 }
 
 function renderEnd() {
@@ -929,15 +939,19 @@ function flipProp() {
       renderPropCard();    // 下一件带着入场动画滑上来
       return;
     }
-    const area = document.getElementById("actionArea");
-    if (area) area.innerHTML = `
-      <div class="btn-row">
-        <button class="gold" onclick="copyProps()">📜 递给理总</button>
-      </div>
-      <div class="note">递完这一次，我们就真的退场了 🙈</div>`;
-    const memo = document.getElementById("memoBox");
-    if (memo) memo.style.display = "block";
+    showPropExit();
   }, last ? 1000 : 2800);
+}
+
+function showPropExit() {
+  const area = document.getElementById("actionArea");
+  if (area) area.innerHTML = `
+    <div class="btn-row">
+      <button class="gold" onclick="copyProps()">📜 递给理总</button>
+    </div>
+    <div class="note">递完这一次，我们就真的退场了 🙈</div>`;
+  const memo = document.getElementById("memoBox");
+  if (memo) memo.style.display = "block";
 }
 
 function copyProps() {
@@ -1124,7 +1138,41 @@ function openCard() {
   ensureAudio();   /* 启签这一下正是手势，乐声随扉页揭开同时浮起 */
 }
 
-renderStart();
+/* ═══════════ 断线续局：牌局常驻 localStorage，手机切走刷新也丢不了 ═══════════ */
+
+const SESSION_KEY = "qyq_session";
+
+function saveState() {
+  if (!S || S.phase === "start" || S.phase === "end") { localStorage.removeItem(SESSION_KEY); return; }
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ S: S, cardNo: cardNo })); } catch {}
+}
+setInterval(saveState, 1500);
+addEventListener("pagehide", saveState);
+
+function restoreState() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SESSION_KEY));
+    if (!d || !d.S || d.S.phase === "start" || d.S.phase === "end") return false;
+    S = d.S; cardNo = d.cardNo || 0;
+    if (S.phase === "props") renderPropCard();
+    else if (S.lastCard) renderTable();
+    else {
+      stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>`;
+      renderActions();
+    }
+    setTimeout(() => toast("已续上未完的局 🎴"), 700);
+    return true;
+  } catch { return false; }
+}
+
+function abandonGame() {
+  if (!confirm("确定弃局？这一局的进度会清空（存过的回忆不受影响）。")) return;
+  localStorage.removeItem(SESSION_KEY);
+  S = newState(); cardNo = 0;
+  renderStart();
+}
+
+if (!restoreState()) renderStart();
 </script>
 </body>
 </html>
