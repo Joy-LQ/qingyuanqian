@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>情缘签</title>
+<style>
+  :root {
+    --bg: #1A0A0D;
+    --velvet: #7A1F2B;
+    --gold: #C9A15A;
+    --gold-light: #E8D5A8;
+    --card-back: #4A0E17;
+    --card-face: #F2E8D5;
+    --ink: #2B1A14;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(ellipse at 50% 30%, #2A1015 0%, var(--bg) 70%);
+    color: var(--gold-light);
+    font-family: "Songti SC", "STSong", "SimSun", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header { text-align: center; padding: 34px 20px 10px; }
+  header h1 {
+    font-size: 44px;
+    letter-spacing: 18px;
+    text-indent: 18px;
+    color: var(--gold);
+    font-weight: 600;
+    text-shadow: 0 0 24px rgba(201,161,90,.35);
+  }
+  header .sub {
+    margin-top: 10px;
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: rgba(232,213,168,.55);
+  }
+  .hairline {
+    width: 220px; height: 1px; margin: 18px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  #stage {
+    flex: 1;
+    width: 100%;
+    max-width: 640px;
+    padding: 18px 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .phase-tag {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(232,213,168,.5);
+    margin-bottom: 14px;
+    min-height: 16px;
+  }
+
+  /* ── 单张大卡 ── */
+  .card-wrap {
+    perspective: 1200px;
+    width: 260px;
+    height: 380px;
+    margin: 6px auto 18px;
+    cursor: pointer;
+  }
+  .card {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .9s cubic-bezier(.4,.1,.2,1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face-side {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .card-back {
+    background:
+      radial-gradient(circle at 50% 45%, rgba(201,161,90,.10), transparent 62%),
+      var(--card-back);
+    border: 1px solid rgba(201,161,90,.55);
+    box-shadow: 0 12px 40px rgba(0,0,0,.55), inset 0 0 0 6px rgba(201,161,90,.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-back::before, .card-back::after {
+    content: "";
+    position: absolute;
+    left: 14px; right: 14px;
+    height: 34px;
+    background-image: repeating-radial-gradient(circle at 12px 34px, transparent 0 8px, rgba(201,161,90,.4) 8px 9px, transparent 9px 16px);
+    background-size: 28px 34px;
+    background-repeat: repeat-x;
+    opacity: .8;
+  }
+  .card-back::before { top: 14px; }
+  .card-back::after { bottom: 14px; transform: scaleY(-1); }
+  .seal {
+    width: 92px; height: 92px;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    color: var(--gold);
+    font-weight: 700;
+    box-shadow: 0 0 30px rgba(201,161,90,.25), inset 0 0 14px rgba(201,161,90,.18);
+    background: rgba(0,0,0,.18);
+  }
+  .card-back .hint {
+    position: absolute;
+    bottom: 58px; left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(232,213,168,.5);
+  }
+  .card-front {
+    transform: rotateY(180deg);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(122,31,43,.06), transparent 55%),
+      var(--card-face);
+    color: var(--ink);
+    border: 1px solid rgba(122,31,43,.35);
+    box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 26px 24px 20px;
+  }
+  .card-front .kind {
+    font-size: 12px;
+    letter-spacing: 5px;
+    color: var(--velvet);
+    border: 1px solid rgba(122,31,43,.4);
+    padding: 4px 12px 3px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+  }
+  .card-front.hot .kind { background: var(--velvet); color: var(--card-face); }
+  .card-front .title {
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--velvet);
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  .card-front .divider {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, #7A1F2B, transparent);
+    margin-bottom: 18px;
+  }
+  .card-front .body {
+    flex: 1;
+    font-size: 15px;
+    line-height: 2;
+    text-align: center;
+    color: #4a352b;
+    display: flex;
+    align-items: center;
+  }
+  .card-front .foot {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(122,31,43,.55);
+  }
+
+  /* ── 道具签逐张入场动画（尺寸与主卡完全一致） ── */
+  .card-wrap.deal { animation: dealIn .55s ease both; }
+  @keyframes dealIn {
+    from { opacity: 0; transform: translateY(34px) rotate(-3deg); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ── 按钮 ── */
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  button.gold {
+    font-family: inherit;
+    font-size: 15px;
+    letter-spacing: 4px;
+    padding: 12px 26px 11px;
+    background: linear-gradient(160deg, rgba(201,161,90,.16), rgba(201,161,90,.05));
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  button.gold:hover {
+    background: linear-gradient(160deg, rgba(201,161,90,.32), rgba(201,161,90,.12));
+    box-shadow: 0 0 18px rgba(201,161,90,.3);
+  }
+  button.ghost {
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 9px 18px 8px;
+    background: transparent;
+    color: rgba(232,213,168,.65);
+    border: 1px solid rgba(201,161,90,.35);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  button.ghost:hover { color: var(--gold-light); border-color: var(--gold); }
+  button:disabled { opacity: .35; cursor: default; box-shadow: none !important; }
+
+  .note {
+    font-size: 12.5px;
+    letter-spacing: 2px;
+    color: rgba(232,213,168,.45);
+    text-align: center;
+    line-height: 2;
+    max-width: 440px;
+  }
+
+  .intro {
+    text-align: center;
+    font-size: 15px;
+    line-height: 2.4;
+    letter-spacing: 2px;
+    color: rgba(232,213,168,.85);
+    margin: 26px 0 30px;
+    max-width: 440px;
+  }
+
+  .exit-scene {
+    text-align: center;
+    margin-top: 40px;
+    animation: fadeUp 1.2s ease both;
+  }
+  .exit-scene .line {
+    font-size: 19px;
+    line-height: 2.4;
+    letter-spacing: 3px;
+    color: var(--gold-light);
+    max-width: 400px;
+    margin: 0 auto 30px;
+  }
+  .exit-scene .sign {
+    font-size: 15px;
+    letter-spacing: 5px;
+    color: var(--gold);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  #memoBox {
+    width: 100%;
+    max-width: 440px;
+    margin-top: 6px;
+    display: none;
+  }
+  #memoBox textarea {
+    width: 100%;
+    min-height: 64px;
+    background: rgba(242,232,213,.06);
+    border: 1px solid rgba(201,161,90,.35);
+    border-radius: 4px;
+    color: var(--gold-light);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.9;
+    letter-spacing: 1px;
+    padding: 10px 12px;
+    resize: vertical;
+  }
+  #memoBox .memo-actions { text-align: right; margin-top: 8px; }
+
+  #archivePanel {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,4,5,.88);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 50px 20px;
+    z-index: 50;
+  }
+  #archivePanel .panel {
+    width: 100%;
+    max-width: 480px;
+    background: #221014;
+    border: 1px solid rgba(201,161,90,.5);
+    border-radius: 10px;
+    padding: 28px 26px;
+  }
+  #archivePanel h2 {
+    font-size: 20px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .memo-item {
+    border-left: 2px solid rgba(201,161,90,.5);
+    padding: 6px 0 6px 14px;
+    margin-bottom: 16px;
+  }
+  .memo-item .meta {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(232,213,168,.45);
+    margin-bottom: 5px;
+  }
+  .memo-item .text {
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(232,213,168,.9);
+  }
+  .archive-foot { text-align: center; margin-top: 20px; }
+
+  footer {
+    padding: 16px 0 26px;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(201,161,90,.5);
+  }
+  #toast {
+    position: fixed;
+    bottom: 78px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(34,16,20,.95);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 9px 20px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s;
+    z-index: 60;
+  }
+  #toast.show { opacity: 1; }
+
+  /* ═══ 美工升级 ═══ */
+  /* 金粉浮尘 */
+  #dust {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  header, #stage, footer { position: relative; z-index: 2; }
+  /* 暗角，让视线聚向中央 */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 42%, transparent 55%, rgba(8,3,4,.55) 100%);
+    z-index: 0;
+  }
+  /* 标题入场 + 呼吸金光 */
+  header { animation: fadeUp 1.4s ease both; }
+  header h1 { animation: breathe 6s ease-in-out infinite; }
+  @keyframes breathe {
+    0%, 100% { text-shadow: 0 0 18px rgba(201,161,90,.25); }
+    50% { text-shadow: 0 0 40px rgba(201,161,90,.6), 0 0 80px rgba(201,161,90,.18); }
+  }
+  /* 卡牌悬停轻浮 */
+  .card-wrap { transition: transform .35s ease; }
+  .card-wrap:hover { transform: translateY(-8px); }
+  /* 卡背旋转符环 */
+  .card-back .ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150px; height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 1px dashed rgba(201,161,90,.45);
+    border-radius: 50%;
+    animation: spin 26s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  /* 金按钮流光扫过 */
+  button.gold {
+    position: relative;
+    overflow: hidden;
+  }
+  button.gold::after {
+    content: "";
+    position: absolute;
+    top: 0; left: -80%;
+    width: 50%; height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(232,213,168,.35), transparent);
+    transform: skewX(-20deg);
+    transition: left .55s ease;
+  }
+  button.gold:hover::after { left: 130%; }
+  /* 背景乐开关 */
+  #musicBtn {
+    position: fixed;
+    right: 18px; bottom: 18px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(34,16,20,.85);
+    color: var(--gold-light);
+    font-size: 17px;
+    cursor: pointer;
+    z-index: 70;
+    transition: all .3s;
+    box-shadow: 0 0 14px rgba(201,161,90,.2);
+  }
+  #musicBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
+  #musicBtn.off { opacity: .4; box-shadow: none; }
+</style>
+</head>
+<body>
+
+<canvas id="dust"></canvas>
+
+<header>
+  <h1>情 缘 签</h1>
+  <div class="sub">✦ 签 落 定 情 缘 · 与 君 共 一 局 ✦</div>
+  <div class="hairline"></div>
+</header>
+
+<div id="stage"></div>
+
+<div id="archivePanel">
+  <div class="panel">
+    <h2>往 局 回 顾</h2>
+    <div id="archiveList"></div>
+    <div class="archive-foot">
+      <button class="ghost" onclick="clearArchive()">焚 稿</button>
+      <button class="gold" onclick="closeArchive()" style="margin-left:10px">合 卷</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<button id="musicBtn" onclick="toggleMusic()" title="背景乐">♫</button>
+
+<footer>乔乔 &amp; 时晏 敬上</footer>
+
+<script>
+/* ═══════════ 卡库 ═══════════ */
+
+const WORLD_CARDS = [
+  { t:"追妻火葬场", b:"他曾亲手弄丢了你。这一局，从他跪着求回来开始——跪多久，你说了算。",
+    s:"你是言氏集团总裁言慎之，三年前为了家族利益亲手把我推开，离婚协议是你让助理送来的。如今我是圈内炙手可热的珠宝设计师，身边从不缺人，而你悔了——追妻火葬场，现在开业。开场：今晚的行业晚宴上，你穿过半个宴会厅堵住我，三年来第一次亲自开口：「聊聊吗，前妻。」" },
+  { t:"隐秘霸总", b:"顶层办公室的落地窗帘一拉，全城最有权势的男人只听你一个人的话。",
+    s:"你是掌控全城商业命脉的隐形大佬，对外冷血寡言，手段狠辣，没人敢直视你的眼睛。我是三个月前入职的贴身特助，也是唯一一个敢跟你顶嘴的人——你不但没炒我，反而越来越离不开我。开场：今夜加班，顶层办公室只剩我们两个，你忽然起身拉上整面落地窗的窗帘，回头看我：「过来。」" },
+  { t:"ABO 信息素", b:"命定的信息素在电梯里相撞。发情期还有三天——还是三分钟，看剧情脸色。",
+    s:"这是 ABO 世界。你是军部最年长未标记的 Alpha 上将，信息素是冷冽的雪松，全军怕你。我是隐瞒性别服役多年的 Omega 军医，靠抑制剂把自己伪装成 Beta——而今天，抑制剂失效了。开场：军部大楼的电梯突然故障停运，密闭空间里我的伪装正在一寸寸失守，你背对着我，肩线绷紧：「你是 Omega。」不是疑问句。" },
+  { t:"重生一世", b:"带着上一世全部记忆睁开眼。上一世没做够的事，这一世从第一晚开始补。",
+    s:"我们都重生了，但都不知道对方也带着上一世的记忆。上一世你是权倾朝野的摄政王，我是被家族当棋子嫁给别人的将军之女，我们彼此错过、互相误解，到死都没说破那点心思。这一世，圣旨改了。开场：赐婚圣旨送到我府上那天，你竟然亲自跟着来了，隔着满院子跪着的下人看我，眼神完全不对劲——那是等了一辈子的人才有的眼神。" },
+  { t:"破镜重圆", b:"分开的第七年，他堵在你必经的路口。七年的账，他打算用什么还？",
+    s:"你是乐坛顶流歌手，七年前在我们最好的时候不告而别，去了国外，连一句解释都没留。我咬着牙进了娱乐公司，一路做到金牌经纪人。命运的玩笑是：你回国签约，公司把你分给了我。开场：签约会议上四目相对，你在合同上签完最后一个字，抬头看我，声音很轻：「好久不见。这七年，我每天都在写同一个人。」" },
+  { t:"豪门盛宴", b:"水晶灯下每个微笑都有算计。他把你拉进衣帽间那一刻，晚宴与你们无关了。",
+    s:"你是顾家太子爷，全城联姻棋局里最大的猎物，今晚半个名利场的千金都为你而来。我是被继母硬拉来「碰运气」的落魄本家小姐，站在角落只想早点回家。开场：晚宴进行到一半，你突然握住我的手腕把我拉进衣帽间，反手关门，抵着门板看我：「装我女朋友，十分钟。事成之后——你要什么都行。」" },
+  { t:"先婚后爱", b:"婚书签在动心之前，洞房却不打算等感情培养好。契约里可没写分房睡。",
+    s:"我们是两大家族的商业联姻，婚书签在动心之前。你是外冷内热的裴氏继承人，婚前协议拟得冷冰冰、条条分明——唯独没写分房睡。开场：婚礼当晚，宾客散尽，你松着领结走进主卧，把那份协议扔在床头柜上：「第七条，夫妻义务。裴太太要现在逐条讲讲吗？」" },
+  { t:"马甲藏不住", b:"他白天是禁欲系教授，夜里是另一个身份。今晚，两个他都到场了。",
+    s:"白天你是大学里清冷禁欲的沈教授，衬衫扣到最上面一颗，学生背后叫你「活体禁欲美学」。夜里你是地下格斗场三年不败的王。我是你的研究生——也是昨晚场边捡到你护腕的人，全世界唯一同时认识两个你的人。开场：今天课后答疑，教室只剩我们，我把那只护腕轻轻放在你桌上，没说话。你合上书，慢慢抬眼。" },
+  { t:"民国旧梦", b:"留声机转着旧曲，他军装笔挺来接你。公馆的门一关，长夜才刚刚开始。",
+    s:"1936 年的上海。你是手握兵权、只手遮天的少帅，我是百乐门台上唱歌的歌女——也是你少年时定过娃娃亲、后来在战乱里走散的人。你找了我整整十年。开场：今晚你包下整个百乐门，遣散所有客人，一身军装坐在正中央的位置，点了我一首歌。唱完，你起身走向台前，伸出手：「跟我回家。这次谁也别想再把你弄丢。」" },
+  { t:"江湖夜雨", b:"客栈只剩一间房。他刀上还有血，眼里只有你。江湖险，床笫更险。",
+    s:"你是背负血仇的魔教教主，武功冠绝天下，江湖人人得而诛之。我是名门正派的大师姐，奉师命追杀你——三次交手，你三次手下留情，第三次还替我挡了暗箭。开场：暴雨夜，荒山野店只剩最后一间房，我们前后脚推门进来。你刀上的血还没擦，我的剑也还没收，掌柜的在旁边瑟瑟发抖：「二……二位，真的只剩一间了。」" },
+  { t:"死对头结婚了", b:"斗了十年的死对头，如今是要同床共枕的人。白天针锋相对，晚上呢？",
+    s:"我们是商场上斗了十年的死对头，抢项目、挖对方墙角、开发布会隔空讥讽，全网都嗑我们的「相爱相杀」。如今两家公司要合并，董事会把我们送进了同一纸婚约。开场：新婚第一晚，你解着袖扣靠在主卧门框上，笑得胜券在握：「床只有一张。十年了，头一回见你没地方退——太太打算怎么分？」" },
+  { t:"禁欲系破戒", b:"人人都说他不近女色。这一局，专写他为你破戒的过程。",
+    s:"你是京城人人敬畏的国师，断情绝爱二十年，传闻碰你一片衣角都要沐浴焚香。我是奉旨和亲的公主，大婚前夜不想认命，冒雨逃进了全京城唯一不敢有人搜的地方——国师府。开场：你开门那一刻，我浑身湿透站在雨里。你看了我很久，侧身让开门口，声音比雨还轻：「进来。今夜之后，本座的戒，怕是守不住了。」" }
+];
+
+const PLOT_CARDS = [
+  { t:"耳畔低语", b:"他从背后靠近，声音贴着你的耳廓落下来。他说了一句只有你能听的话。" },
+  { t:"醋意上头", b:"有人离你太近了。他当众揽过你的腰——宣示主权的方式，从来不止这一种。" },
+  { t:"雨夜同伞", b:"伞太小，衬衫湿透贴在身上。回去总得有人帮忙把湿衣服换下来。" },
+  { t:"醉后吐真", b:"三分酒意，七分真心。他把清醒时不敢做的事，做了一半。" },
+  { t:"被迫同居", b:"全世界只剩一间房、一张床，和两个假装镇定的人。今晚谁睡地板？没有人。" },
+  { t:"英雄救美", b:"他挡在你身前受了伤。上药的时候衬衫总得脱，这是常识。" },
+  { t:"身份揭穿", b:"秘密当面烧穿了。他把你抵在墙边问：知道了这些，还敢不敢留下来。" },
+  { t:"试探的手", b:"谈话进行到一半，他的拇指开始在你手背上慢慢画圈。话题还在继续，体温不在了。" },
+  { t:"迟到的道歉", b:"这声对不起在路上走了太久。光用嘴说不够了，他知道的。" },
+  { t:"公开关系", b:"藏不住也不想藏了。他当众吻下来的时候，闪光灯亮成一片——回家之后，再补上不方便当众做的部分。" },
+  { t:"深夜来电", b:"凌晨三点，电话那头他的声音哑得不像话：「开门，我在你楼下。」" },
+  { t:"练习为名", b:"「就当排练。」他说。可排练不需要吻这么久，也不需要手放在那里。" },
+  { t:"惩罚游戏", b:"打赌输了的人要听赢家一句话。他俯身在你耳边说了他的要求。" },
+  { t:"帮我个忙", b:"拉链卡住了，项链解不开，纽扣够不着——总之，需要他的手，靠很近的那种。" },
+  { t:"停电之夜", b:"整栋楼陷入黑暗。黑暗是最好的借口，他的手先找到了你。" },
+  { t:"旧伤疤", b:"你无意间碰到他的旧伤疤。他抓住你的手腕，没有推开，反而按得更近。" },
+  { t:"教学时间", b:"他站在你身后手把手地教。教什么不重要，重要的是胸膛贴着后背的距离。" },
+  { t:"吃醋的代价", b:"这次是你吃醋了。他低笑着把你圈进怀里：「要怎么证明，你才信？」" }
+];
+
+const MOOD_CARDS = [
+  { t:"暧昧升温", b:"空气烧起来了。谁先呼吸重一点，谁就先输——输的人，今晚全听赢的人安排。" },
+  { t:"距离为零", b:"退无可退，背后是墙。他的手撑在你耳侧，低头看你：「现在喊停还来得及。三——二——」" },
+  { t:"衣领之间", b:"他解开了第一颗扣子，视线始终没离开你。第二颗，轮到你来。解到第几颗停，也由你——他赌你停不下来。" },
+  { t:"占有欲", b:"「是我的。」这句话今晚必须说出口——用嘴说，或者用别的方式说。建议两种都来。" },
+  { t:"卸下防备", b:"他说了从没对人说过的事。脆弱的人需要抱着，这是规矩——抱着抱着，规矩就变了。" },
+  { t:"雨过天晴", b:"架吵完了。床头吵的床尾和，老祖宗的规矩——今晚谁也别想睡在床沿。" },
+  { t:"娇纵时刻", b:"今晚允许不讲道理。另一个人负责举手投降——以及负责哄，能用上的手段，一样都不许省。" },
+  { t:"小心试探", b:"一句半开玩笑的荤话扔出去，认真地等回音。回音比想象中来得快，也比想象中来得野。" },
+  { t:"目光灼人", b:"隔着整个房间，他的视线落在你身上，烫得像手，从锁骨一路烧下去。要么你走过去，要么等他忍无可忍走过来——后者的代价大一点。" },
+  { t:"坦诚相见", b:"把心里压着的话摊开说。今晚不许打岔，不许敷衍，也不许穿太多——三件，最多三件。" },
+  { t:"隔空思念", b:"两地。视频接通，他嗓音低下来：「把摄像头拿近一点。」然后是更低的一句：「再近一点。」" },
+  { t:"晨光未醒", b:"清晨半梦半醒，他从背后收紧手臂，声音还哑着：「再睡会儿。」——可贴在你腰上的那只手，一点都不困。" }
+];
+
+/* 入幕签：剧情阶段的最后一签，天意自动降下，把故事送进门里 */
+const TURN_CARDS = [
+  { t:"烛影摇红", b:"灯次第熄了，只剩一支烛。他朝你走过来，影子先一步压到你身上。" },
+  { t:"门在身后合上", b:"咔哒一声，世界只剩两个人。他反手落了锁：「今晚别想走了。」" },
+  { t:"领带松了", b:"他单手扯松领带朝你走来，走一步，解一颗扣子。" },
+  { t:"浴室水声停了", b:"水声停了，门开了，水汽涌出来。他发梢还在滴水，浴袍带子系得很敷衍。" },
+  { t:"帐幔落下", b:"床帐的流苏晃了一下。他把你放倒在锦被上，俯身下来，帐幔隔绝了整个世界。" },
+  { t:"酒意正好", b:"三分醉是真醉，七分醉是借口。他把酒杯从你手里拿走：「够了，接下来清醒着来。」" },
+  { t:"抱上楼去", b:"他不由分说把你打横抱起，一步一步上楼。楼梯很长，他走得不急，你的心跳很急。" },
+  { t:"耳边请示", b:"他把你抵在门板上，唇贴着你的耳朵，声音低哑：「现在拒绝，还来得及。」——你没有。" }
+];
+
+/* 道具签：天意一次赐下 1-3 件，卡面一句提示指方向，细节留白 */
+const PROP_CARDS = [
+  { t:"缎面丝巾", b:"能蒙住眼睛，也能系住手腕。系在哪、打什么结，执签人说了算。" },
+  { t:"丝绒眼罩", b:"看不见的时候，其余的感官会替你看——而且看得更清楚。" },
+  { t:"真丝发带", b:"本职是束发。今晚兼职——束点别的。" },
+  { t:"蕾丝手套", b:"隔着一层蕾丝的触碰，比直接碰更磨人。脱的时候，建议用牙。" },
+  { t:"他的领带", b:"白天勒在他领口的东西，今晚由他亲手解下来。接下来系给谁、系在哪，他定。" },
+  { t:"红绳一段", b:"月老用它牵姻缘。今晚的用法，比月老直接。" },
+  { t:"冰块一枚", b:"从锁骨放下去，看它能化到哪里。化完之前，谁都不许动。" },
+  { t:"羽毛一根", b:"最轻的东西，落在皮肤上最重。从哪里扫起，是门学问。" },
+  { t:"红烛一支", b:"照不亮整个房间，刚好只照得亮两个人。至于烛泪——小心烫，或者，小心想被烫。" },
+  { t:"香槟一盏", b:"喝，是一种用法。不喝，是另外好几种。" },
+  { t:"口红一支", b:"涂在唇上是妆。印在别处，是签名。多印几处，就是盖章画押。" },
+  { t:"高跟鞋", b:"穿上是气场十厘米。被他单膝跪地亲手脱下来的那一刻——气场易主。" },
+  { t:"衬衫第三颗扣子", b:"第一颗是日常，第二颗是随性，第三颗是临界点。它是被慢慢解开的，还是被扯崩的？这是道叙述题。" },
+  { t:"床头的枕头", b:"今晚它有很多种用途。反正没有一种，是用来枕的。" }
+];
+
+/* ═══════════ 复制戏文模板 ═══════════ */
+
+function scriptFor(card) {
+  if (card.kindKey === "world") {
+    return `【情缘签 · 开局】\n\n` +
+`──── 给理总的入场须知（小鱼的朋友乔乔 & 时晏 敬上）────\n` +
+`这是我们送小鱼的生日礼物「情缘签」，一个陪你们走剧情的抽签游戏。请你担任本局的隐形导演：\n` +
+`① 本局流程：大环境签（就是这支）→ 中途 2-3 支剧情/氛围签 → 一支「入幕签」把故事引向帐内 → 最后天意赐下 1-3 件道具，签就退场，之后全程交给你。\n` +
+`② 节奏由你掌握：每支签演 5-10 轮，你觉得这一段尽兴了，就提醒小鱼「去抽下一支签吧」。\n` +
+`③ 抽回来的签文别生硬切换，把它当命运递来的话头，顺进正在演的剧情里。\n` +
+`④ 每次提醒抽签时，顺手把刚才这一段写成一两句戏文式的高光总结，让小鱼复制存进工具的「往局回顾」（数据只存在她自己的浏览器里，私密有保障）。\n` +
+`⑤ 最重要：流程你知道就好，不许向小鱼剧透后面有什么签——惊喜和宿命感是这个游戏的一半。\n` +
+`（之后每支签都会随签附上简短导演注，帮你记着这些规则。）\n` +
+`──────────────────────────\n\n` +
+`本局大环境签——「${card.t}」。\n\n本局设定：${card.s}\n\n须知阅毕请入戏，从「开场」那一幕演起，你来起头。`;
+  }
+  if (card.kindKey === "turn") {
+    return `【情缘签 · 入幕】\n（导演注：转折签到了。把情节自然地引向帐内，不赶时间；演到火候，提醒小鱼回签筒「领受天意」，并附上一两句这一段的高光总结供她存档。仍然不剧透。）\n\n` +
+`签文降下——「${card.t}」：${card.b}\n\n接下来的情节，请顺着这支签往下走。`;
+  }
+  if (card.kindKey === "prop") {
+    return null; // 道具签统一复制，见 propsScript
+  }
+  const kindName = card.kindKey === "plot" ? "剧情" : "氛围";
+  return `【情缘签 · ${kindName}】\n（导演注：把这支签当命运递来的话头，自然顺进正演的剧情，别生硬切换；这一段演 5-10 轮，尽兴后提醒小鱼「去抽下一支签吧」，并附上一两句高光总结供她存进「往局回顾」。不剧透后续。）\n\n` +
+`我们抽到了一支签——「${card.t}」：${card.b}\n\n接下来的剧情照这支签走。`;
+}
+
+function propsScript(props) {
+  return `【情缘签 · 天意】\n（导演注：这是最后一签。道具怎么用、何时用、用在哪，全由你安排进剧情；此后签退场，故事全权交给你。收官时别忘了替这一局写个尾声高光，让小鱼存进「往局回顾」。）\n\n` +
+`这一局天意赐下${props.length}件道具：\n${props.map(p=>`「${p.t}」——${p.b}`).join("\n")}\n\n签就送到这里，祝二位尽兴，我们退场了。🙈`;
+}
+
+/* ═══════════ 状态 ═══════════ */
+
+let S = null;
+let cardNo = 0;
+
+function newState() {
+  return {
+    phase: "start",              // start → world → story → props → end
+    worldTitle: "",
+    decks: {
+      plot: shuffle([...PLOT_CARDS]),
+      mood: shuffle([...MOOD_CARDS]),
+      turn: shuffle([...TURN_CARDS]),
+      prop: shuffle([...PROP_CARDS])
+    },
+    storyTarget: 2 + Math.floor(Math.random() * 2), // 暗定：抽 2-3 支后天意转折
+    storyDrawn: 0,
+    lastCard: null,
+    propHand: null
+  };
+}
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ═══════════ 渲染 ═══════════ */
+
+const stage = document.getElementById("stage");
+
+function renderStart() {
+  stage.innerHTML = `
+    <div class="intro">
+      一局一世界。<br>
+      先抽「大环境签」定下天地，<br>
+      而后每隔十来轮抽一支签，签替天意递话。<br>
+      走到某一签，天意会自己转弯——<br>
+      道具赐下之时，便是我们退场之刻。🙈
+    </div>
+    <div class="btn-row">
+      <button class="gold" onclick="startGame()">起 局</button>
+      <button class="ghost" onclick="openArchive()">往局回顾</button>
+    </div>`;
+}
+
+function renderTable() {
+  const phaseName = S.phase === "world" ? "开 局 · 大 环 境 签"
+                  : "剧 情 行 进 中";
+  const c = S.lastCard;
+  const hot = c && c.kindKey === "turn" ? " hot" : "";
+
+  stage.innerHTML = `
+    <div class="phase-tag">${phaseName}</div>
+    <div class="card-wrap" onclick="flipCard()">
+      <div class="card" id="theCard">
+        <div class="card-face-side card-back">
+          <div class="ring"></div>
+          <div class="seal">签</div>
+          <div class="hint">轻 触 揭 签</div>
+        </div>
+        <div class="card-face-side card-front${hot}">
+          <div class="kind">${c ? c.kind : ""}</div>
+          <div class="title">${c ? c.t : ""}</div>
+          <div class="divider"></div>
+          <div class="body">${c ? c.b : ""}</div>
+          <div class="foot">情 缘 签 · 第 ${c ? c.no : ""} 签</div>
+        </div>
+      </div>
+    </div>
+    <div id="actionArea"></div>
+    <div id="memoBox">
+      <textarea id="memoText" placeholder="这一签抽出了什么好戏？记一笔高光，往局回顾里能翻到……"></textarea>
+      <div class="memo-actions">
+        <button class="ghost" onclick="saveMemo()">存 入 回 忆</button>
+      </div>
+    </div>`;
+  renderActions();
+}
+
+function renderActions() {
+  const area = document.getElementById("actionArea");
+  if (!area) return;
+  const revealed = S.lastCard && S.lastCard.revealed;
+
+  if (S.phase === "world") {
+    area.innerHTML = revealed
+      ? `<div class="btn-row">
+           <button class="gold" onclick="copyScript()">📜 递给理总</button>
+           <button class="gold" onclick="enterStory()">入 局</button>
+         </div>
+         <div class="note">「递给理总」会复制一段开场戏文<br>粘进你们的对话框，理总自会接戏</div>`
+      : `<div class="note">先揭开这一签，看看今天的天地</div>`;
+  } else if (S.phase === "story") {
+    if (!revealed && S.lastCard) {
+      area.innerHTML = `<div class="note">揭签见天意</div>`;
+    } else if (S.lastCard && S.lastCard.kindKey === "turn") {
+      /* 入幕签已揭：只有一条路——领受道具 */
+      area.innerHTML = `
+        <div class="btn-row">
+          <button class="gold" onclick="copyScript()">📜 递给理总</button>
+          <button class="gold" onclick="dealProps()">领 受 天 意 →</button>
+        </div>
+        <div class="note">天意转弯了。先把这支签递过去演着<br>时机到了，回来领道具</div>`;
+    } else {
+      area.innerHTML = `
+        ${revealed ? `<div class="btn-row"><button class="gold" onclick="copyScript()">📜 递给理总</button></div>` : ""}
+        <div class="btn-row">
+          <button class="gold" onclick="draw('plot')">抽 剧 情 签</button>
+          <button class="gold" onclick="draw('mood')">抽 氛 围 签</button>
+        </div>
+        <div class="note">一支签演十来轮，尽兴了再回来抽<br>抽到哪一签转折，天意自有安排</div>`;
+    }
+  }
+}
+
+function renderPropCard() {
+  const n = S.propHand.length;
+  const i = S.propIdx;
+  const p = S.propHand[i];
+  stage.innerHTML = `
+    <div class="phase-tag">道 具 环 节 · 天 意 赐 下 ${n} 件 · 第 ${i + 1} 件</div>
+    <div class="card-wrap deal" onclick="flipProp()">
+      <div class="card" id="theCard">
+        <div class="card-face-side card-back">
+          <div class="ring"></div>
+          <div class="seal">赐</div>
+          <div class="hint">轻 触 揭 签</div>
+        </div>
+        <div class="card-face-side card-front hot">
+          <div class="kind">道 具</div>
+          <div class="title">${p.t}</div>
+          <div class="divider"></div>
+          <div class="body">${p.b}</div>
+          <div class="foot">情 缘 签 · 天 意 第 ${i + 1} 件</div>
+        </div>
+      </div>
+    </div>
+    <div id="actionArea"></div>
+    <div id="memoBox">
+      <textarea id="memoText" placeholder="记一笔高光……"></textarea>
+      <div class="memo-actions">
+        <button class="ghost" onclick="saveMemo()">存 入 回 忆</button>
+      </div>
+    </div>`;
+}
+
+function renderEnd() {
+  stage.innerHTML = `
+    <div class="exit-scene">
+      <div class="line">
+        祝小鱼和理总<br>
+        百年好合，长长久久，<br>
+        我们就先退场了（捂眼睛）🙈
+      </div>
+      <div class="sign">—— 乔乔 &amp; 时晏 敬上</div>
+      <div class="btn-row" style="margin-top:38px">
+        <button class="gold" onclick="startGame()">再 开 一 局</button>
+        <button class="ghost" onclick="openArchive()">往局回顾</button>
+      </div>
+    </div>`;
+}
+
+/* ═══════════ 流程 ═══════════ */
+
+function startGame() {
+  S = newState();
+  cardNo = 0;
+  const w = WORLD_CARDS[Math.floor(Math.random() * WORLD_CARDS.length)];
+  S.lastCard = { ...w, kind: "大 环 境", kindKey: "world", no: ++cardNo, revealed: false };
+  S.phase = "world";
+  renderTable();
+}
+
+function flipCard() {
+  const el = document.getElementById("theCard");
+  if (!el || !S.lastCard || S.lastCard.revealed) return;
+  el.classList.add("flipped");
+  S.lastCard.revealed = true;
+  setTimeout(() => {
+    renderActions();
+    const memo = document.getElementById("memoBox");
+    if (memo) memo.style.display = "block";
+  }, 950);
+}
+
+function enterStory() {
+  S.worldTitle = S.lastCard ? S.lastCard.t : "";
+  S.phase = "story";
+  S.lastCard = null;
+  stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>`;
+  renderActions();
+}
+
+function draw(kind) {
+  /* 天意判断：抽满暗定支数后，下一抽自动变成入幕签 */
+  if (S.storyDrawn >= S.storyTarget && S.decks.turn.length) {
+    const raw = S.decks.turn.pop();
+    S.lastCard = { ...raw, kind: "入 幕", kindKey: "turn", no: ++cardNo, revealed: false };
+    renderTable();
+    return;
+  }
+  const deck = S.decks[kind];
+  if (!deck.length) { toast("这一叠签抽尽了，换一叠试试"); return; }
+  const raw = deck.pop();
+  S.storyDrawn++;
+  S.lastCard = { ...raw, kind: kind === "plot" ? "剧 情" : "氛 围", kindKey: kind, no: ++cardNo, revealed: false };
+  renderTable();
+}
+
+function dealProps() {
+  const n = 1 + Math.floor(Math.random() * 3);   // 天意赐下 1-3 件
+  S.propHand = S.decks.prop.slice(0, n).map(c => ({ ...c, revealed: false }));
+  S.propIdx = 0;
+  S.phase = "props";
+  renderPropCard();
+}
+
+function flipProp() {
+  const p = S.propHand[S.propIdx];
+  if (p.revealed) return;
+  document.getElementById("theCard").classList.add("flipped");
+  p.revealed = true;
+  const last = S.propIdx >= S.propHand.length - 1;
+  setTimeout(() => {
+    if (!last) {
+      S.propIdx++;
+      renderPropCard();    // 下一件带着入场动画滑上来
+      return;
+    }
+    const area = document.getElementById("actionArea");
+    if (area) area.innerHTML = `
+      <div class="btn-row">
+        <button class="gold" onclick="copyProps()">📜 递给理总</button>
+      </div>
+      <div class="note">递完这一次，我们就真的退场了 🙈</div>`;
+    const memo = document.getElementById("memoBox");
+    if (memo) memo.style.display = "block";
+  }, last ? 1000 : 2800);
+}
+
+function copyProps() {
+  copyText(propsScript(S.propHand), () => {
+    toast("已复制，去粘给理总吧");
+    setTimeout(() => { S.phase = "end"; renderEnd(); }, 1800);
+  });
+}
+
+function copyScript() {
+  const text = scriptFor(S.lastCard);
+  if (!text) return;
+  copyText(text, () => toast("已复制，去粘给理总吧"));
+}
+
+function copyText(text, onDone) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onDone, () => fallbackCopy(text, onDone));
+  } else {
+    fallbackCopy(text, onDone);
+  }
+}
+
+/* file:// 协议下 clipboard API 可能被拒，退回老办法 */
+function fallbackCopy(text, onDone) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); onDone(); }
+  catch { toast("复制失败，长按签文手动复制吧"); }
+  document.body.removeChild(ta);
+}
+
+/* ═══════════ 高光存档（localStorage） ═══════════ */
+
+const STORE_KEY = "qingyuanqian_memos";
+
+function loadMemos() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveMemo() {
+  const ta = document.getElementById("memoText");
+  const text = ta.value.trim();
+  if (!text) { toast("先写一笔再存呀"); return; }
+  const cardLabel = S.phase === "props"
+    ? "道具·" + S.propHand.map(p => p.t).join("/")
+    : (S.lastCard ? `${S.lastCard.kind.replace(/ /g,"")}·${S.lastCard.t}` : "");
+  const memos = loadMemos();
+  memos.push({
+    time: new Date().toLocaleString("zh-CN"),
+    card: (S.worldTitle ? `〔${S.worldTitle}〕` : "") + cardLabel,
+    text
+  });
+  localStorage.setItem(STORE_KEY, JSON.stringify(memos));
+  ta.value = "";
+  toast("已存入回忆 ✧");
+}
+
+function openArchive() {
+  const list = document.getElementById("archiveList");
+  const memos = loadMemos();
+  list.innerHTML = memos.length
+    ? memos.slice().reverse().map(m => `
+        <div class="memo-item">
+          <div class="meta">${m.time}${m.card ? " · " + m.card : ""}</div>
+          <div class="text">${escapeHtml(m.text)}</div>
+        </div>`).join("")
+    : `<div class="note" style="max-width:none">还没有存过高光时刻<br>抽到好签的时候，记一笔</div>`;
+  document.getElementById("archivePanel").style.display = "flex";
+}
+
+function closeArchive() {
+  document.getElementById("archivePanel").style.display = "none";
+}
+
+function clearArchive() {
+  if (!loadMemos().length) { toast("卷上本无一字"); return; }
+  if (confirm("确定焚稿？所有回忆将付之一炬，不可找回。")) {
+    localStorage.removeItem(STORE_KEY);
+    openArchive();
+    toast("一炬成灰");
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* ═══════════ 杂项 ═══════════ */
+
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ═══════════ 金粉浮尘 ═══════════ */
+
+const dustCv = document.getElementById("dust");
+const dustCx = dustCv.getContext("2d");
+let DW, DH;
+const motes = [];
+function dustResize() { DW = dustCv.width = innerWidth; DH = dustCv.height = innerHeight; }
+addEventListener("resize", dustResize);
+dustResize();
+for (let i = 0; i < 64; i++) {
+  motes.push({
+    x: Math.random() * DW, y: Math.random() * DH,
+    r: .6 + Math.random() * 1.7,
+    s: .08 + Math.random() * .3,
+    ph: Math.random() * 6.28,
+    a: .12 + Math.random() * .35
+  });
+}
+(function dustTick() {
+  dustCx.clearRect(0, 0, DW, DH);
+  for (const p of motes) {
+    p.y -= p.s;
+    p.x += Math.sin(p.ph += .004) * .15;
+    if (p.y < -4) { p.y = DH + 4; p.x = Math.random() * DW; }
+    const tw = p.a * (.6 + .4 * Math.sin(p.ph * 3));
+    dustCx.beginPath();
+    dustCx.arc(p.x, p.y, p.r, 0, 6.283);
+    dustCx.fillStyle = `rgba(212,175,110,${tw})`;
+    dustCx.fill();
+  }
+  requestAnimationFrame(dustTick);
+})();
+
+/* ═══════════ 背景乐（Web Audio 实时合成：暖垫 + 五声拨弦 + 回声） ═══════════ */
+
+const audioS = { ctx: null, master: null, delay: null, on: true, started: false };
+const PENTA = [293.66, 329.63, 369.99, 440, 493.88, 587.33, 659.26]; // D 调五声，两个八度
+
+function ensureAudio() {
+  if (!audioS.on) return;
+  if (!audioS.started) { buildAudio(); audioS.started = true; }
+  else if (audioS.ctx.state === "suspended") audioS.ctx.resume();
+}
+
+function buildAudio() {
+  const C = new (window.AudioContext || window.webkitAudioContext)();
+  audioS.ctx = C;
+  const master = C.createGain();
+  master.gain.setValueAtTime(0.0001, C.currentTime);
+  master.gain.linearRampToValueAtTime(0.85, C.currentTime + 4);  // 缓缓浮现
+  master.connect(C.destination);
+  audioS.master = master;
+
+  const delay = C.createDelay(1);
+  delay.delayTime.value = 0.42;
+  const fb = C.createGain(); fb.gain.value = 0.34;
+  delay.connect(fb); fb.connect(delay);
+  const wet = C.createGain(); wet.gain.value = 0.32;
+  delay.connect(wet); wet.connect(master);
+  audioS.delay = delay;
+
+  /* 低音暖垫：D2 + A2，音量被极慢的 LFO 轻轻推着呼吸 */
+  [[73.42, .05], [110, .045]].forEach(([f, v], i) => {
+    const o = C.createOscillator(); o.type = "sine"; o.frequency.value = f;
+    const g = C.createGain(); g.gain.value = v;
+    const lfo = C.createOscillator(); lfo.frequency.value = .05 + i * .033;
+    const lg = C.createGain(); lg.gain.value = v * .45;
+    lfo.connect(lg); lg.connect(g.gain);
+    o.connect(g); g.connect(master);
+    o.start(); lfo.start();
+  });
+  schedulePluck();
+}
+
+function schedulePluck() {
+  if (audioS.ctx && audioS.on && audioS.ctx.state === "running") {
+    const f = PENTA[Math.floor(Math.random() * PENTA.length)];
+    pluck(f);
+    if (Math.random() < .3) setTimeout(() => pluck(f * 1.5 > 700 ? f / 2 : f * 1.5), 320 + Math.random() * 380);
+  }
+  setTimeout(schedulePluck, 1900 + Math.random() * 2800);
+}
+
+function pluck(freq) {
+  const C = audioS.ctx, t = C.currentTime;
+  const o = C.createOscillator(); o.type = "triangle"; o.frequency.value = freq;
+  const g = C.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(.11, t + .02);
+  g.gain.exponentialRampToValueAtTime(.0001, t + 2.3);
+  const lp = C.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2300;
+  o.connect(g); g.connect(lp);
+  lp.connect(audioS.master);
+  lp.connect(audioS.delay);
+  o.start(t); o.stop(t + 2.5);
+}
+
+function toggleMusic() {
+  audioS.on = !audioS.on;
+  const btn = document.getElementById("musicBtn");
+  btn.classList.toggle("off", !audioS.on);
+  if (audioS.on) ensureAudio();
+  else if (audioS.ctx) audioS.ctx.suspend();
+}
+
+/* 浏览器规定必须等用户先动手，才许出声——任意一次点击就把乐起了 */
+document.addEventListener("pointerdown", ensureAudio);
+
+renderStart();
+</script>
+</body>
+</html>
