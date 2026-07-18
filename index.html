@@ -429,6 +429,33 @@
   }
   #musicBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
   #musicBtn.off { opacity: .4; box-shadow: none; }
+
+  /* ═══ 手机排版：字大一档，整体收紧到一屏 ═══ */
+  @media (max-width: 520px) {
+    header { padding: 18px 16px 4px; }
+    header h1 { font-size: 30px; letter-spacing: 10px; text-indent: 10px; }
+    header .sub { margin-top: 6px; font-size: 11px; letter-spacing: 4px; }
+    .hairline { margin: 10px auto 0; width: 170px; }
+    #stage { padding: 10px 16px 16px; }
+    .phase-tag { margin-bottom: 8px; }
+    .card-wrap { width: 252px; height: 372px; margin: 2px auto 12px; }
+    .card-front { padding: 20px 18px 16px; }
+    .card-front .kind { margin-bottom: 12px; }
+    .card-front .title { font-size: 25px; margin-bottom: 12px; }
+    .card-front .divider { margin-bottom: 12px; }
+    .card-front .body { font-size: 16px; line-height: 1.9; }
+    .btn-row { gap: 10px; margin-bottom: 8px; }
+    button.gold { font-size: 14.5px; padding: 10px 18px 9px; letter-spacing: 3px; }
+    button.ghost { font-size: 12.5px; padding: 8px 14px 7px; }
+    .note { font-size: 13px; line-height: 1.8; }
+    .intro { font-size: 15px; line-height: 2.1; margin: 14px 0 18px; }
+    .exit-scene { margin-top: 16px; }
+    .exit-scene .line { font-size: 17px; line-height: 2.2; }
+    footer { padding: 8px 0 14px; font-size: 11px; }
+    #musicBtn { width: 40px; height: 40px; right: 14px; bottom: 14px; }
+    #memoBox textarea { font-size: 15px; }
+    .memo-item .text { font-size: 15px; }
+  }
 </style>
 </head>
 <body>
@@ -976,7 +1003,8 @@ const PENTA = [293.66, 329.63, 369.99, 440, 493.88, 587.33, 659.26]; // D 调五
 function ensureAudio() {
   if (!audioS.on) return;
   if (!audioS.started) { buildAudio(); audioS.started = true; }
-  else if (audioS.ctx.state === "suspended") audioS.ctx.resume();
+  /* iOS 上新建的引擎也可能处于挂起态，必须在手势内立刻唤醒 */
+  if (audioS.ctx && audioS.ctx.state === "suspended") audioS.ctx.resume();
 }
 
 function buildAudio() {
@@ -1040,8 +1068,10 @@ function toggleMusic() {
   else if (audioS.ctx) audioS.ctx.suspend();
 }
 
-/* 浏览器规定必须等用户先动手，才许出声——任意一次点击就把乐起了 */
+/* 浏览器规定必须等用户先动手，才许出声——任意一次点击/触摸就把乐起了 */
 document.addEventListener("pointerdown", ensureAudio);
+document.addEventListener("touchend", ensureAudio);   /* iOS 认这个手势更稳 */
+document.addEventListener("click", ensureAudio);
 
 renderStart();
 </script>
