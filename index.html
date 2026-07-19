@@ -1073,7 +1073,11 @@ function enterStory() {
   S.worldEra = S.lastCard ? S.lastCard.e : null;
   S.phase = "story";
   S.lastCard = null;
-  stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>`;
+  stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>
+    <div id="memoBox" style="display:block">
+      <textarea id="memoText" placeholder="开局这一幕演到哪了？记一笔高光，往局回顾里能翻到……"></textarea>
+      <div class="memo-actions"><button class="ghost" onclick="saveMemo()">存 入 回 忆</button></div>
+    </div>`;
   renderActions();
 }
 
@@ -1155,6 +1159,10 @@ function renderFinal() {
     <div class="btn-row">
       <button class="gold" onclick="drawEnding()">求 结 局 签</button>
       <button class="ghost" onclick="finishGame()">不求了 · 就此收官</button>
+    </div>
+    <div id="memoBox" style="display:block">
+      <textarea id="memoText" placeholder="道具这一段演出了什么好戏？记一笔高光……"></textarea>
+      <div class="memo-actions"><button class="ghost" onclick="saveMemo()">存 入 回 忆</button></div>
     </div>`;
 }
 
@@ -1207,13 +1215,14 @@ function saveMemo() {
   const ta = document.getElementById("memoText");
   const text = ta.value.trim();
   if (!text) { toast("先写一笔再存呀"); return; }
-  const cardLabel = S.phase === "props"
+  const cardLabel = (S.phase === "props" || S.phase === "final") && S.propHand
     ? "道具·" + S.propHand.map(p => p.t).join("/")
-    : (S.lastCard ? `${S.lastCard.kind.replace(/ /g,"")}·${S.lastCard.t}` : "");
+    : (S.lastCard ? `${S.lastCard.kind.replace(/ /g,"")}·${S.lastCard.t}` : "开局");
+  const worldTag = S.worldTitle || (S.lastCard && S.lastCard.kindKey === "world" ? S.lastCard.t : "");
   const memos = loadMemos();
   memos.push({
     time: new Date().toLocaleString("zh-CN"),
-    card: (S.worldTitle ? `〔${S.worldTitle}〕` : "") + cardLabel,
+    card: (worldTag ? `〔${worldTag}〕` : "") + cardLabel,
     text
   });
   localStorage.setItem(STORE_KEY, JSON.stringify(memos));
