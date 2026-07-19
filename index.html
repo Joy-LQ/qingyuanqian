@@ -732,6 +732,19 @@ const PROP_CARDS = [
   { t:"鲛绡帕一方", b:"薄如蝉翼，覆在眼上是一层雾。隔雾看人，越看，越想撩开。" }
 ];
 
+/* 暗线签：开局暗抽，以密文写进须知——执行的 AI 解得开，玩家看不懂。宿命感的最高形态 */
+const DARK_CARDS = [
+  "他有一个瞒着你的身份，与这个世界的最高权力有关。",
+  "你们不是第一次相遇——他记得每一个细节，你全忘了。",
+  "他答应过某个人一件事。那件事与你有关，也与他为什么出现在你身边有关。",
+  "他背负着一个期限，倒计时正在走。他打算瞒到最后一天。",
+  "有人派他来接近你。任务是真的，动心也是真的——他正在两者之间叛变。",
+  "他身上有一件从不离身的旧物，来历与你有关，他等你认出来。",
+  "他曾远远见过你最狼狈、最不想被人看见的一刻，并因此记住了你一生。",
+  "这个世界有一条只有他知道的规则，他一直在暗中用它保护你。"
+];
+function encodeDark(s) { return btoa(unescape(encodeURIComponent(s))); }
+
 /* 角色签：放一个配角进场搅局——剧情阶段第三叠 */
 const CHAR_CARDS = [
   { t:"情敌登场", b:"有人也盯上你了，来势汹汹。他在旁边看着——看他几时忍不住。" },
@@ -776,9 +789,10 @@ function scriptFor(card) {
 `④ 每次提醒抽签时，顺手把刚才这一段写成一两句戏文式的高光总结，让小鱼复制存进工具的「往局回顾」（数据只存在她自己的浏览器里，私密有保障）。\n` +
 `⑤ 最重要：流程你知道就好，不许向小鱼剧透后面有什么签——惊喜和宿命感是这个游戏的一半。\n` +
 heatLine() +
+darkLine() +
 `（之后每支签都会随签附上简短导演注，帮你记着这些规则。）\n` +
 `──────────────────────────\n\n` +
-`本局大环境签——「${card.t}」。\n\n本局设定：${card.s}\n\n须知阅毕请入戏，从「开场」那一幕演起，你来起头。`;
+`本局大环境签——「${card.t}」。\n\n本局设定：${card.s}` + sagaLine() + `\n\n须知阅毕请入戏，` + (S && S.saga ? `这是续卷——别重演旧开场，从前情之后的新一幕起头。` : `从「开场」那一幕演起，你来起头。`);
   }
   if (card.kindKey === "turn") {
     return `【情缘签 · 入幕】\n（导演注：转折签到了。把情节自然地引向帐内，不赶时间；演到火候，提醒小鱼回签筒「领受天意」，并附上一两句这一段的高光总结供她存档。仍然不剧透。）\n\n` +
@@ -793,6 +807,19 @@ heatLine() +
   const kindName = card.kindKey === "plot" ? "剧情" : card.kindKey === "char" ? "角色" : "氛围";
   return `【情缘签 · ${kindName}】\n（导演注：把这支签当命运递来的话头，自然顺进正演的剧情，别生硬切换；这一段演 5-10 轮，尽兴后提醒小鱼「去抽下一支签吧」（可顺带建议：剧情签推事件，氛围签原地加温），并附上一两句高光总结供她存进「往局回顾」。不剧透后续。）\n\n` +
 `我们抽到了一支签——「${card.t}」：${card.b}\n\n接下来的剧情照这支签走。`;
+}
+
+function sagaLine() {
+  if (!S || !S.saga) return "";
+  const h = (S.saga.highlights && S.saga.highlights.length)
+    ? `\n前情高光：\n${S.saga.highlights.map(x => "· " + x).join("\n")}`
+    : "";
+  return `\n\n【续卷 · 前情提要】这个世界我们开过一卷，灯一直留着。${h}`;
+}
+
+function darkLine() {
+  if (!S || !S.dark) return "";
+  return `⑦ 天机（仅你可见）：下面这段密文是本局的一条暗线，base64 编码——自行解码，绝不向小鱼透露原文，也不许承认有没有暗线。把它当伏笔悄悄埋进剧情，在中后段选一个最狠的时机揭晓：【${encodeDark(S.dark)}】\n`;
 }
 
 function heatLine() {
@@ -864,7 +891,8 @@ function renderStart() {
       </div>
     </div>
     <div class="btn-row">
-      <button class="gold" onclick="startGame()">起 局</button>
+      <button class="gold" onclick="startGame()">起 局</button>${loadSaga() ? `
+      <button class="gold" onclick="continueSaga()">续 前 卷 ·〔${loadSaga().title}〕</button>` : ""}
       <button class="ghost" onclick="openArchive()">往局回顾</button>
     </div>`;
 }
@@ -1001,8 +1029,10 @@ function renderEnd() {
       <div class="sign">—— 乔乔 &amp; 时晏 敬上</div>
       <div class="btn-row" style="margin-top:38px">
         <button class="gold" onclick="startGame()">再 开 一 局</button>
+        <button class="ghost" onclick="saveSaga()">留 灯 续 卷</button>
         <button class="ghost" onclick="openArchive()">往局回顾</button>
       </div>
+      <div class="note" style="margin-top:10px">「留灯续卷」把这个世界存成未完的长卷<br>下次起局，同一片天地，接着讲</div>
     </div>`;
 }
 
@@ -1010,6 +1040,7 @@ function renderEnd() {
 
 function startGame() {
   S = newState();
+  S.dark = Math.random() < 0.5 ? DARK_CARDS[Math.floor(Math.random() * DARK_CARDS.length)] : null;
   cardNo = 0;
   const w = WORLD_CARDS[Math.floor(Math.random() * WORLD_CARDS.length)];
   S.lastCard = { ...w, kind: "大 环 境", kindKey: "world", no: ++cardNo, revealed: false };
@@ -1303,6 +1334,36 @@ function openCard() {
   localStorage.setItem("qyq_card_seen", "1");
   document.getElementById("birthdayCard").classList.add("gone");
   ensureAudio();   /* 启签这一下正是手势，乐声随扉页揭开同时浮起 */
+}
+
+/* ═══════════ 长篇模式：留灯续卷 ═══════════ */
+
+const SAGA_KEY = "qingyuanqian_saga";
+
+function loadSaga() {
+  try { return JSON.parse(localStorage.getItem(SAGA_KEY)); } catch { return null; }
+}
+
+function saveSaga() {
+  if (!S || !S.worldTitle) { toast("这一局没有可存的世界"); return; }
+  const w = WORLD_CARDS.find(x => x.t === S.worldTitle);
+  const highlights = loadMemos().filter(m => m.card && m.card.indexOf("〔" + S.worldTitle + "〕") === 0)
+                                .map(m => m.text).slice(-6);
+  localStorage.setItem(SAGA_KEY, JSON.stringify({ title: S.worldTitle, world: w, era: S.worldEra, highlights, time: new Date().toLocaleString("zh-CN") }));
+  toast("灯留下了，长卷已存 🏮");
+}
+
+function continueSaga() {
+  const saga = loadSaga();
+  if (!saga || !saga.world) { toast("长卷不见了，重新起局吧"); return; }
+  S = newState();
+  S.dark = Math.random() < 0.5 ? DARK_CARDS[Math.floor(Math.random() * DARK_CARDS.length)] : null;
+  S.saga = saga;
+  cardNo = 0;
+  S.lastCard = { ...saga.world, kind: "大 环 境", kindKey: "world", no: ++cardNo, revealed: false };
+  S.phase = "world";
+  renderTable();
+  toast("续上前卷 ·〔" + saga.title + "〕🏮");
 }
 
 /* ═══════════ 断线续局：牌局常驻 localStorage，手机切走刷新也丢不了 ═══════════ */
