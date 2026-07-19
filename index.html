@@ -429,6 +429,23 @@
   }
   #musicBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
   #musicBtn.off { opacity: .4; box-shadow: none; }
+  /* 往局回顾常驻入口——任何阶段都能翻回忆 */
+  #archiveBtn {
+    position: fixed;
+    right: 18px; bottom: 74px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(34,16,20,.85);
+    color: var(--gold-light);
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    z-index: 70;
+    transition: all .3s;
+    box-shadow: 0 0 14px rgba(201,161,90,.2);
+  }
+  #archiveBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
 
   /* ═══ 生日扉页 ═══ */
   #birthdayCard {
@@ -516,6 +533,7 @@
     .exit-scene .line { font-size: 17px; line-height: 2.2; }
     footer { padding: 8px 0 14px; font-size: 11px; }
     #musicBtn { width: 40px; height: 40px; right: 14px; bottom: 14px; }
+    #archiveBtn { width: 40px; height: 40px; right: 14px; bottom: 64px; font-size: 14px; }
     #memoBox textarea { font-size: 15px; }
     .memo-item .text { font-size: 15px; }
   }
@@ -564,6 +582,7 @@
 
 <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 <button id="musicBtn" onclick="toggleMusic()" title="背景乐">♫</button>
+<button id="archiveBtn" onclick="openArchive()" title="往局回顾">卷</button>
 
 <footer>乔乔 &amp; 时晏 敬上</footer>
 
@@ -692,8 +711,8 @@ function scriptFor(card) {
 }
 
 function propsScript(props) {
-  return `【情缘签 · 天意】\n（导演注：这是最后一签。道具怎么用、何时用、用在哪，全由你安排进剧情；此后签退场，故事全权交给你。收官时别忘了替这一局写个尾声高光，让小鱼存进「往局回顾」。）\n\n` +
-`这一局天意赐下${props.length}件道具：\n${props.map(p=>`「${p.t}」——${p.b}`).join("\n")}\n\n签就送到这里，祝二位尽兴，我们退场了。🙈`;
+  return `【情缘签 · 天意】\n（导演注：这是最后一签。道具怎么用、何时用、用在哪，全由你安排进剧情；道具用完后剧情不落幕，继续往下带，什么时候收官、怎么收官，以你和小鱼尽兴为准。收官时记得替这一局写个尾声高光，让小鱼存进「往局回顾」。）\n\n` +
+`这一局天意赐下${props.length}件道具：\n${props.map(p=>`「${p.t}」——${p.b}`).join("\n")}`;
 }
 
 /* ═══════════ 状态 ═══════════ */
