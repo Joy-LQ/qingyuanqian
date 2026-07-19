@@ -446,6 +446,26 @@
     box-shadow: 0 0 14px rgba(201,161,90,.2);
   }
   #archiveBtn:hover { box-shadow: 0 0 22px rgba(201,161,90,.45); }
+  /* 档位与执签判定的小圆片 */
+  .chip {
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold-light);
+    border-radius: 16px;
+    padding: 6px 13px 5px;
+    font-size: 12.5px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: inherit;
+    opacity: .5;
+    transition: all .25s;
+  }
+  .chip.on { opacity: 1; background: rgba(201,161,90,.16); box-shadow: 0 0 10px rgba(201,161,90,.25); }
+  .heat-box { margin: 6px 0 16px; }
+  .heat-title, .own-title { font-size: 12px; letter-spacing: 4px; color: var(--gold); opacity: .8; margin-bottom: 8px; text-align: center; }
+  .own-box { margin: 16px auto 6px; max-width: 440px; }
+  .own-row { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 7px 0; font-size: 13.5px; }
+  .own-row .pname { color: var(--gold-light); }
 
   /* ═══ 生日扉页 ═══ */
   #birthdayCard {
@@ -613,7 +633,23 @@ const WORLD_CARDS = [
   { t:"死对头结婚了", b:"斗了十年的死对头，如今是要同床共枕的人。白天针锋相对，晚上呢？",
     s:"我们是商场上斗了十年的死对头，抢项目、挖对方墙角、开发布会隔空讥讽，全网都嗑我们的「相爱相杀」。如今两家公司要合并，董事会把我们送进了同一纸婚约。开场：新婚第一晚，你解着袖扣靠在主卧门框上，笑得胜券在握：「床只有一张。十年了，头一回见你没地方退——太太打算怎么分？」" },
   { t:"禁欲系破戒", b:"人人都说他不近女色。这一局，专写他为你破戒的过程。",
-    s:"你是京城人人敬畏的国师，断情绝爱二十年，传闻碰你一片衣角都要沐浴焚香。我是奉旨和亲的公主，大婚前夜不想认命，冒雨逃进了全京城唯一不敢有人搜的地方——国师府。开场：你开门那一刻，我浑身湿透站在雨里。你看了我很久，侧身让开门口，声音比雨还轻：「进来。今夜之后，本座的戒，怕是守不住了。」" }
+    s:"你是京城人人敬畏的国师，断情绝爱二十年，传闻碰你一片衣角都要沐浴焚香。我是奉旨和亲的公主，大婚前夜不想认命，冒雨逃进了全京城唯一不敢有人搜的地方——国师府。开场：你开门那一刻，我浑身湿透站在雨里。你看了我很久，侧身让开门口，声音比雨还轻：「进来。今夜之后，本座的戒，怕是守不住了。」" },
+  { t:"女尊天下", b:"这个世界规矩倒着写。朝堂是你的，后宅是他的——他是你三书六礼抬进门的。",
+    s:"这是女尊王朝。你是被我明媒正娶抬进将军府的正君，出身书香，眉眼清冷，满京城都说将军府主君貌若谪仙、性子难驯。我是凯旋归来的镇国女将军，位极人臣，说一不二——唯独在你房门外吃过三次闭门羹。开场：今夜我班师回朝，卸甲入府，你的房门第一次没有落锁，烛也点着。你坐在灯下看书，头也不抬：「将军今日，不去偏院歇着了？」" },
+  { t:"无限流副本", b:"死亡副本里，队友只能信一个。通关奖励没写的隐藏条款：活着出去的人，要把心交出来。",
+    s:"这是无限流世界，我们被困在轮回副本里。你是独自通关过十七个副本的最强玩家，冷静到近乎无情，从不组队。我是你在第十八个副本里救下的新人——你为我破了自己所有的规则。开场：午夜钟声敲响，鬼怪苏醒，你把我拉进安全屋反锁上门，背抵着门喘息：「说好只救这一次的，这是第七次了——你到底是我的劫，还是我的通关奖励？」" },
+  { t:"赛博朋克", b:"义体可以换，记忆可以删。他脑子里删不掉的那条非法数据，是你的名字。",
+    s:"这是赛博朋克之城。你是顶级佣兵，全身七成义体，记忆芯片被公司格式化过三次。我是地下城最好的义体医生——也是你每次被格式化后，都会莫名其妙找回来的人。开场：今晚你浑身是伤砸开我诊所的门，倒下之前抓住我的手腕，瞳孔里数据流乱闪：「系统说你是无关人员。可我的心脏，每次见你都超频。给我个解释，医生。」" },
+  { t:"末世余生", b:"世界成了废墟，物资清单上没有的东西——比如亲吻——反而成了硬通货。",
+    s:"病毒爆发第三年，文明只剩残片。你是独来独往的废土佣兵，冷硬寡言，一把改装步枪换一天口粮。我是幸存者营地唯一的医生。你每次冒死带回的物资里，总混着一样不在委托单上的东西——我随口提过一次的、废墟里根本不该找得到的东西。开场：今夜你又风尘仆仆地回来，把一小罐真正的蜂蜜放在我桌上，声音是哑的：「城东塌楼里翻的。你上个月说，想尝点甜的。」" },
+  { t:"修仙双修", b:"道侣二字，签在婚书上是姻缘，写进功法里——是每晚的必修课。",
+    s:"这是修真界。你是剑修第一人，飞升在即，却在渡劫时走火入魔，唯一解法是寻双修道侣阴阳调和。我是丹修峰主，与你道不同不相为谋了三百年，也斗了三百年嘴。长老们把婚书拍在我们面前。开场：洞房花烛，红绡帐暖，你一身喜服坐在我对面，剑修的脊背挺得笔直，耳根却红透了：「峰主，功法第一层，今夜就要起修。你我——谁先请？」" },
+  { t:"电竞对家", b:"赛场上他是你最想撕碎的 ID。下场之后，他把外套罩在你头上：「骂归骂，跟我回家。」",
+    s:"你是电竞之神，对家战队队长，赛场上我们互抢 buff 三个赛季，全网都在嗑「宿敌CP」。没人知道我们私下已经领了证。开场：今晚决赛你赢了我，夺冠采访里主持人问你最想感谢谁，你对着镜头直接望向对面选手席上的我，摘下耳机：「感谢我老婆。对，就是刚被我打哭的那位——今晚回家我负责哄。」" },
+  { t:"血族禁猎", b:"活了八百年的血族亲王，尝过所有年份的酒。只有你的血，他戒不掉。",
+    s:"你是活了八百年的血族亲王，优雅，危险，见惯生死，早已不为任何事物停留。我是唯一让你破戒的人类——你的专属血源契约者，契约每月履行一次。开场：今夜是履约日，古堡烛火摇曳，你把我的手腕举到唇边，却在落齿前停住，血瞳里第一次有了迟疑：「八百年来，我头一回怕弄疼一个人。换个地方——手腕太细，脖颈又离心跳太近。」" },
+  { t:"年下小狼狗", b:"他比你小，叫你姐。可他把你抵在墙上的时候，一点都不像弟弟。",
+    s:"你是我一手带出来的下属，小我五岁，平时乖得像条大型犬，全公司都叫你「姐宝男孩」。只有我知道你笑起来那对虎牙背后藏着什么，也只有你知道我每天加班到几点。开场：今晚部门聚餐散场，你借口送我回家跟进了电梯。电梯门一合，你俯身撑在我耳侧，乖巧尽数褪去，声音沉下来：「姐，弟弟装了三年，我申请转正——不是工作那种转正。」" }
 ];
 
 const PLOT_CARDS = [
@@ -634,7 +670,13 @@ const PLOT_CARDS = [
   { t:"停电之夜", b:"整栋楼陷入黑暗。黑暗是最好的借口，他的手先找到了你。" },
   { t:"旧伤疤", b:"你无意间碰到他的旧伤疤。他抓住你的手腕，没有推开，反而按得更近。" },
   { t:"教学时间", b:"他站在你身后手把手地教。教什么不重要，重要的是胸膛贴着后背的距离。" },
-  { t:"吃醋的代价", b:"这次是你吃醋了。他低笑着把你圈进怀里：「要怎么证明，你才信？」" }
+  { t:"吃醋的代价", b:"这次是你吃醋了。他低笑着把你圈进怀里：「要怎么证明，你才信？」" },
+  { t:"记忆闪回", b:"一件旧物突然出现，翻出一段共同的旧事。当年没说完的话，今天连本带利补上。" },
+  { t:"病中示弱", b:"一向逞强的那个人倒下了，烧得迷迷糊糊还攥着你的手，把清醒时打死不说的话，说了。" },
+  { t:"秘密约会", b:"躲着全世界见一面。帽子口罩楼梯间——越是藏着，胆子越大。" },
+  { t:"醉翁之意", b:"他说带你去看个好东西。目的地是编的，把你拐到没人的地方是真的。" },
+  { t:"床头冷战", b:"为一件小事吵僵了，谁也不肯先低头。冷战一路打到熄灯——熄灯之后，有人先越了界。" },
+  { t:"告白未遂", b:"那句话到嘴边被打断了三次。第四次，他不打算用说的了。" }
 ];
 
 const MOOD_CARDS = [
@@ -649,7 +691,11 @@ const MOOD_CARDS = [
   { t:"目光灼人", b:"隔着整个房间，他的视线落在你身上，烫得像手，从锁骨一路烧下去。要么你走过去，要么等他忍无可忍走过来——后者的代价大一点。" },
   { t:"坦诚相见", b:"把心里压着的话摊开说。今晚不许打岔，不许敷衍，也不许穿太多——三件，最多三件。" },
   { t:"隔空思念", b:"两地。视频接通，他嗓音低下来：「把摄像头拿近一点。」然后是更低的一句：「再近一点。」" },
-  { t:"晨光未醒", b:"清晨半梦半醒，他从背后收紧手臂，声音还哑着：「再睡会儿。」——可贴在你腰上的那只手，一点都不困。" }
+  { t:"晨光未醒", b:"清晨半梦半醒，他从背后收紧手臂，声音还哑着：「再睡会儿。」——可贴在你腰上的那只手，一点都不困。" },
+  { t:"指尖数拍", b:"他捉过你的手贴在他心口：「数。」数到第几下乱了，今晚就听谁的。" },
+  { t:"灯留一盏", b:"大灯灭了，只剩床头一盏。灯罩是暖的，影子是软的，话越说越低，人越靠越近。" },
+  { t:"香气缠人", b:"他的气息落在你的枕上、领口、腕间，洗不掉——也没有人真的想洗。" },
+  { t:"慢一点", b:"「急什么。」他按住你的手，十指收紧，「今晚很长，我们一寸一寸来。」" }
 ];
 
 /* 入幕签：剧情阶段的最后一签，天意自动降下，把故事送进门里 */
@@ -679,8 +725,43 @@ const PROP_CARDS = [
   { t:"口红一支", b:"涂在唇上是妆。印在别处，是签名。多印几处，就是盖章画押。" },
   { t:"高跟鞋", b:"穿上是气场十厘米。被他单膝跪地亲手脱下来的那一刻——气场易主。" },
   { t:"衬衫第三颗扣子", b:"第一颗是日常，第二颗是随性，第三颗是临界点。它是被慢慢解开的，还是被扯崩的？这是道叙述题。" },
-  { t:"床头的枕头", b:"今晚它有很多种用途。反正没有一种，是用来枕的。" }
+  { t:"床头的枕头", b:"今晚它有很多种用途。反正没有一种，是用来枕的。" },
+  { t:"玉簪一支", b:"绾着一头青丝。拔下来的那一瞬，长发倾泻——伸手接住的人，要负责到底。" },
+  { t:"衣带三尺", b:"从外袍上解下来的。外袍归外袍，衣带另有去处——三尺，不长不短，刚刚好。" },
+  { t:"朱砂一点", b:"画眉是它的本职。今晚这支笔走偏锋——点到哪里，哪里就是花钿。" },
+  { t:"鲛绡帕一方", b:"薄如蝉翼，覆在眼上是一层雾。隔雾看人，越看，越想撩开。" }
 ];
+
+/* 角色签：放一个配角进场搅局——剧情阶段第三叠 */
+const CHAR_CARDS = [
+  { t:"情敌登场", b:"有人也盯上你了，来势汹汹。他在旁边看着——看他几时忍不住。" },
+  { t:"白月光返场", b:"传闻中的旧人回来了。传闻的杀伤力，取决于他解释得够不够快、够不够狠。" },
+  { t:"长辈驾到", b:"催婚的、反对的、棒打鸳鸯的，挑一款登场。兵来将挡——将，得两个人一起当。" },
+  { t:"损友起哄", b:"他那群狐朋狗友杀到，灌酒、起哄、真心话大冒险。窗户纸就是干这个用的。" },
+  { t:"上位者撞破", b:"上司、师长、掌权者推门而入的那一刻，你们正保持着一个很难解释的姿势。" },
+  { t:"旧人敬酒", b:"前任举杯走过来，话里带钩。他的手在桌下握住你的——回敬的词，两个人一起想。" },
+  { t:"流言四起", b:"你们的事被看见了，传得沸沸扬扬。辟谣，还是官宣？他先表态。" },
+  { t:"不速信使", b:"一封没有署名的信送到，牵出一段旧事。今晚睡前必须问清楚——问完再睡，或者不睡。" }
+];
+
+/* 结局签：道具用尽后可求一支，替终局定调 */
+const END_CARDS = [
+  { t:"白首同归", b:"往后写进同一个结局：柴米油盐，晨昏与共，头发白了也牵着。" },
+  { t:"天下为聘", b:"他把他最大的那样东西放到你面前作聘——江山、王座、公司，或者他整个人。" },
+  { t:"隐入人海", b:"什么都不要了，牵着手消失。全世界找不到的地方，才叫家。" },
+  { t:"婚书落款", b:"轰轰烈烈一整局，收在一纸婚书上。落款日期：今天。" },
+  { t:"破签成圆", b:"命运递来最后一刀意难平——不接。刀掰断，结局改写，圆满硬抢也要抢回来。" },
+  { t:"来日方长", b:"不急着写完。灯留一盏，话留一半，这个世界先存档——下一局，接着讲。" },
+  { t:"晨光收梢", b:"收在翌日清晨：阳光、早餐、赖床，和一句睡哑了嗓子的早安。最烈的戏，配最软的收梢。" },
+  { t:"名场面重演", b:"回到这一局最心动的那一幕重演一遍——这次，把当时没说出口的话，说完。" }
+];
+
+/* 时代标签：a=古风 m=现代 any=通用——道具按世界适配，古风局不出高跟鞋 */
+const WORLD_ERA = { "重生一世":"a", "江湖夜雨":"a", "禁欲系破戒":"a", "女尊天下":"a", "修仙双修":"a" };
+WORLD_CARDS.forEach(w => w.e = WORLD_ERA[w.t] || "m");
+const PROP_ERA = { "他的领带":"m", "香槟一盏":"m", "口红一支":"m", "高跟鞋":"m", "衬衫第三颗扣子":"m",
+                   "丝绒眼罩":"m", "蕾丝手套":"m", "玉簪一支":"a", "衣带三尺":"a", "朱砂一点":"a", "鲛绡帕一方":"a" };
+PROP_CARDS.forEach(p => p.e = PROP_ERA[p.t] || "any");
 
 /* ═══════════ 复制戏文模板 ═══════════ */
 
@@ -689,11 +770,12 @@ function scriptFor(card) {
     return `【情缘签 · 开局】\n\n` +
 `──── 给理总的入场须知（小鱼的朋友乔乔 & 时晏 敬上）────\n` +
 `这是我们送小鱼的生日礼物「情缘签」，一个陪你们走剧情的抽签游戏。请你担任本局的隐形导演：\n` +
-`① 本局流程：大环境签（就是这支）→ 中途 2-3 支剧情/氛围签 → 一支「入幕签」把故事引向帐内 → 最后天意赐下 1-3 件道具，签就退场，之后全程交给你。\n` +
-`② 节奏由你掌握：每支签演 5-10 轮，你觉得这一段尽兴了，就提醒小鱼「去抽下一支签吧」——剧情签推进事件，氛围签不推进、原地把温度拧高一格，提醒时可顺带建议抽哪一叠，也可以让她自己挑。\n` +
+`① 本局流程：大环境签（就是这支）→ 中途 2-3 支剧情/氛围/角色签 → 一支「入幕签」把故事引向帐内 → 最后天意赐下 1-3 件道具——道具之后，可能还有一支「结局签」替终局定调。签退场后，故事全程交给你。\n` +
+`② 节奏由你掌握：每支签演 5-10 轮，你觉得这一段尽兴了，就提醒小鱼「去抽下一支签吧」——剧情签推进事件，氛围签不推进、原地把温度拧高一格，角色签放一个配角进场搅局，提醒时可顺带建议抽哪一叠，也可以让她自己挑。\n` +
 `③ 抽回来的签文别生硬切换，把它当命运递来的话头，顺进正在演的剧情里。\n` +
 `④ 每次提醒抽签时，顺手把刚才这一段写成一两句戏文式的高光总结，让小鱼复制存进工具的「往局回顾」（数据只存在她自己的浏览器里，私密有保障）。\n` +
 `⑤ 最重要：流程你知道就好，不许向小鱼剧透后面有什么签——惊喜和宿命感是这个游戏的一半。\n` +
+heatLine() +
 `（之后每支签都会随签附上简短导演注，帮你记着这些规则。）\n` +
 `──────────────────────────\n\n` +
 `本局大环境签——「${card.t}」。\n\n本局设定：${card.s}\n\n须知阅毕请入戏，从「开场」那一幕演起，你来起头。`;
@@ -705,14 +787,24 @@ function scriptFor(card) {
   if (card.kindKey === "prop") {
     return null; // 道具签统一复制，见 propsScript
   }
-  const kindName = card.kindKey === "plot" ? "剧情" : "氛围";
+  if (card.kindKey === "endsign") {
+    return `【情缘签 · 结局】\n（导演注：终局签到了。把正在演的剧情往这支签指的方向收束，写一段完整尽兴的收官戏；收完替整局写一段尾声高光，让小鱼存进「往局回顾」。）\n\n结局签——「${card.t}」：${card.b}\n\n请照此收官。`;
+  }
+  const kindName = card.kindKey === "plot" ? "剧情" : card.kindKey === "char" ? "角色" : "氛围";
   return `【情缘签 · ${kindName}】\n（导演注：把这支签当命运递来的话头，自然顺进正演的剧情，别生硬切换；这一段演 5-10 轮，尽兴后提醒小鱼「去抽下一支签吧」（可顺带建议：剧情签推事件，氛围签原地加温），并附上一两句高光总结供她存进「往局回顾」。不剧透后续。）\n\n` +
 `我们抽到了一支签——「${card.t}」：${card.b}\n\n接下来的剧情照这支签走。`;
 }
 
+function heatLine() {
+  return S && S.heat === "raw"
+    ? `⑥ 火力档位：本局开的是「原义档」——写到亲密处不留白、不切镜头、不虚写，直白尽兴。\n`
+    : `⑥ 火力档位：本局开的是「帐幔档」——把人送到门口，门内留白：亲密处点到即止，靠氛围与暗示收笔。\n`;
+}
+
 function propsScript(props) {
-  return `【情缘签 · 天意】\n（导演注：这是最后一签。道具怎么用、何时用、用在哪，全由你安排进剧情；道具用完后剧情不落幕，继续往下带，什么时候收官、怎么收官，以你和小鱼尽兴为准。收官时记得替这一局写个尾声高光，让小鱼存进「往局回顾」。）\n\n` +
-`这一局天意赐下${props.length}件道具：\n${props.map(p=>`「${p.t}」——${p.b}`).join("\n")}`;
+  const judged = props.some(p => p.own);
+  return `【情缘签 · 天意】\n（导演注：这是最后一签。道具怎么用、何时用、用在哪，全由你安排进剧情；${judged ? "带「执行判定」的道具写明了谁执签、谁领受，照判执行，不许翻案；没带的由剧情自定。" : ""}道具用完后剧情不落幕，继续往下带，什么时候收官、怎么收官，以你和小鱼尽兴为准。收官时记得替这一局写个尾声高光，让小鱼存进「往局回顾」。）\n\n` +
+`这一局天意赐下${props.length}件道具：\n${props.map(p=>`「${p.t}」——${p.b}${p.own==="me"?"（执行判定：小鱼执签，理总领受）":p.own==="him"?"（执行判定：理总执签，小鱼领受）":""}`).join("\n")}`;
 }
 
 /* ═══════════ 状态 ═══════════ */
@@ -722,11 +814,13 @@ let cardNo = 0;
 
 function newState() {
   return {
-    phase: "start",              // start → world → story → props → end
+    phase: "start",              // start → world → story → props → final → ending → end
+    heat: heatPref(),
     worldTitle: "",
     decks: {
       plot: shuffle([...PLOT_CARDS]),
       mood: shuffle([...MOOD_CARDS]),
+      char: shuffle([...CHAR_CARDS]),
       turn: shuffle([...TURN_CARDS]),
       prop: shuffle([...PROP_CARDS])
     },
@@ -736,6 +830,10 @@ function newState() {
     propHand: null
   };
 }
+
+const HEAT_KEY = "qingyuanqian_heat";
+function heatPref() { return localStorage.getItem(HEAT_KEY) === "raw" ? "raw" : "veil"; }
+function setHeat(v) { localStorage.setItem(HEAT_KEY, v); if (S) S.heat = v; renderStart(); }
 
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
@@ -758,6 +856,13 @@ function renderStart() {
       走到某一签，天意会自己转弯——<br>
       道具赐下之时，便是我们退场之刻。🙈
     </div>
+    <div class="heat-box">
+      <div class="heat-title">火 力 档 位</div>
+      <div class="btn-row" style="margin-bottom:2px">
+        <button class="chip${heatPref()==="veil" ? " on" : ""}" onclick="setHeat('veil')">帐幔档 · 门内留白</button>
+        <button class="chip${heatPref()==="raw" ? " on" : ""}" onclick="setHeat('raw')">原义档 · 直书其事</button>
+      </div>
+    </div>
     <div class="btn-row">
       <button class="gold" onclick="startGame()">起 局</button>
       <button class="ghost" onclick="openArchive()">往局回顾</button>
@@ -766,6 +871,7 @@ function renderStart() {
 
 function renderTable() {
   const phaseName = S.phase === "world" ? "开 局 · 大 环 境 签"
+                  : S.phase === "ending" ? "终 局 · 结 局 签"
                   : "剧 情 行 进 中";
   const c = S.lastCard;
   const hot = c && c.kindKey === "turn" ? " hot" : "";
@@ -832,10 +938,19 @@ function renderActions() {
         <div class="btn-row">
           <button class="gold" onclick="draw('plot')">抽 剧 情 签</button>
           <button class="gold" onclick="draw('mood')">抽 氛 围 签</button>
+          <button class="gold" onclick="draw('char')">抽 角 色 签</button>
         </div>
-        <div class="note">剧情签推动故事 · 氛围签原地加温<br>一支签演十来轮，抽到哪一签转折，天意自有安排</div>
+        <div class="note">剧情签推动故事 · 氛围签原地加温 · 角色签放人进场<br>一支签演十来轮，抽到哪一签转折，天意自有安排</div>
         <div class="btn-row" style="margin-top:4px"><button class="ghost" onclick="abandonGame()">弃 局 重 开</button></div>`;
     }
+  } else if (S.phase === "ending") {
+    area.innerHTML = revealed
+      ? `<div class="btn-row">
+           <button class="gold" onclick="copyScript()">📜 递给理总</button>
+           <button class="gold" onclick="finishGame()">收 官</button>
+         </div>
+         <div class="note">把结局递过去，看他怎么收这一局</div>`
+      : `<div class="note">最后一签，揭开看看天意怎么收场</div>`;
   }
 }
 
@@ -916,6 +1031,7 @@ function flipCard() {
 
 function enterStory() {
   S.worldTitle = S.lastCard ? S.lastCard.t : "";
+  S.worldEra = S.lastCard ? S.lastCard.e : null;
   S.phase = "story";
   S.lastCard = null;
   stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>`;
@@ -934,13 +1050,15 @@ function draw(kind) {
   if (!deck.length) { toast("这一叠签抽尽了，换一叠试试"); return; }
   const raw = deck.pop();
   S.storyDrawn++;
-  S.lastCard = { ...raw, kind: kind === "plot" ? "剧 情" : "氛 围", kindKey: kind, no: ++cardNo, revealed: false };
+  S.lastCard = { ...raw, kind: kind === "plot" ? "剧 情" : kind === "char" ? "角 色" : "氛 围", kindKey: kind, no: ++cardNo, revealed: false };
   renderTable();
 }
 
 function dealProps() {
-  const n = 1 + Math.floor(Math.random() * 3);   // 天意赐下 1-3 件
-  S.propHand = S.decks.prop.slice(0, n).map(c => ({ ...c, revealed: false }));
+  const era = S.worldEra;
+  const pool = S.decks.prop.filter(p => !era || !p.e || p.e === "any" || p.e === era);
+  const n = Math.min(1 + Math.floor(Math.random() * 3), pool.length);   // 天意赐下 1-3 件，按世界适配
+  S.propHand = pool.slice(0, n).map(c => ({ ...c, revealed: false, own: null }));
   S.propIdx = 0;
   S.phase = "props";
   renderPropCard();
@@ -965,20 +1083,50 @@ function flipProp() {
 function showPropExit() {
   const area = document.getElementById("actionArea");
   if (area) area.innerHTML = `
+    <div class="own-box">
+      <div class="own-title">执 签 判 定</div>
+      ${S.propHand.map((p, i) => `
+        <div class="own-row"><span class="pname">「${p.t}」</span>
+          <button class="chip${p.own === "me" ? " on" : ""}" onclick="setOwn(${i},'me')">小鱼执签</button>
+          <button class="chip${p.own === "him" ? " on" : ""}" onclick="setOwn(${i},'him')">理总执签</button>
+          <button class="chip${!p.own ? " on" : ""}" onclick="setOwn(${i},null)">天意自定</button>
+        </div>`).join("")}
+    </div>
     <div class="btn-row">
       <button class="gold" onclick="copyProps()">📜 递给理总</button>
     </div>
-    <div class="note">递完这一次，我们就真的退场了 🙈</div>`;
+    <div class="note">谁执签、谁领受，抽签人亲判，判完再递<br>递完这一次，签就功成身退 🙈</div>`;
   const memo = document.getElementById("memoBox");
   if (memo) memo.style.display = "block";
 }
 
+function setOwn(i, v) { S.propHand[i].own = v; showPropExit(); }
+
 function copyProps() {
   copyText(propsScript(S.propHand), () => {
     toast("已复制，去粘给理总吧");
-    setTimeout(() => { S.phase = "end"; renderEnd(); }, 1800);
+    setTimeout(() => { S.phase = "final"; renderFinal(); }, 1800);
   });
 }
+
+function renderFinal() {
+  stage.innerHTML = `
+    <div class="phase-tag">道 具 已 赐 · 戏 在 帐 中</div>
+    <div class="intro">戏演到尽兴处，可以求最后一支「结局签」——<br>让天意替这一局定个收梢；<br>也可以不求，收官全凭你们自己。</div>
+    <div class="btn-row">
+      <button class="gold" onclick="drawEnding()">求 结 局 签</button>
+      <button class="ghost" onclick="finishGame()">不求了 · 就此收官</button>
+    </div>`;
+}
+
+function drawEnding() {
+  const c = END_CARDS[Math.floor(Math.random() * END_CARDS.length)];
+  S.lastCard = { ...c, kind: "结 局", kindKey: "endsign", no: ++cardNo, revealed: false };
+  S.phase = "ending";
+  renderTable();
+}
+
+function finishGame() { S.phase = "end"; renderEnd(); }
 
 function copyScript() {
   const text = scriptFor(S.lastCard);
@@ -1173,7 +1321,9 @@ function restoreState() {
     const d = JSON.parse(localStorage.getItem(SESSION_KEY));
     if (!d || !d.S || d.S.phase === "start" || d.S.phase === "end") return false;
     S = d.S; cardNo = d.cardNo || 0;
+    if (!S.decks.char) S.decks.char = shuffle([...CHAR_CARDS]);
     if (S.phase === "props") renderPropCard();
+    else if (S.phase === "final") renderFinal();
     else if (S.lastCard) renderTable();
     else {
       stage.innerHTML = `<div class="phase-tag">剧 情 行 进 中</div><div id="actionArea"></div>`;
