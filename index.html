@@ -729,7 +729,12 @@ const PROP_CARDS = [
   { t:"玉簪一支", b:"绾着一头青丝。拔下来的那一瞬，长发倾泻——伸手接住的人，要负责到底。" },
   { t:"衣带三尺", b:"从外袍上解下来的。外袍归外袍，衣带另有去处——三尺，不长不短，刚刚好。" },
   { t:"朱砂一点", b:"画眉是它的本职。今晚这支笔走偏锋——点到哪里，哪里就是花钿。" },
-  { t:"鲛绡帕一方", b:"薄如蝉翼，覆在眼上是一层雾。隔雾看人，越看，越想撩开。" }
+  { t:"鲛绡帕一方", b:"薄如蝉翼，覆在眼上是一层雾。隔雾看人，越看，越想撩开。" },
+  /* 火力全开专属：只在「火力全开」档进入道具池 */
+  { t:"计时沙漏", b:"三分钟的沙。翻过来之后，只许用唇，不许用手。沙漏不响，谁也不许停。", h:"max" },
+  { t:"一碟温蜜", b:"涂在哪里，就从哪里尝回来。别问用途——问就是餐具没洗。", h:"max" },
+  { t:"床头的镜子", b:"摆好角度，让害羞的人无处可逃。今晚每一幕都有观众，观众就是你们自己。", h:"max" },
+  { t:"丝质长袜", b:"穿上不是为了保暖，褪下不是为了睡觉。用手还是用别的褪，考验诚意。", h:"max" }
 ];
 
 /* 暗线签：开局暗抽，以密文写进须知——执行的 AI 解得开，玩家看不懂。宿命感的最高形态 */
@@ -823,9 +828,11 @@ function darkLine() {
 }
 
 function heatLine() {
-  return S && S.heat === "raw"
-    ? `⑥ 火力档位：本局开的是「原义档」——写到亲密处不留白、不切镜头、不虚写，直白尽兴。\n`
-    : `⑥ 火力档位：本局开的是「帐幔档」——把人送到门口，门内留白：亲密处点到即止，靠氛围与暗示收笔。\n`;
+  if (S && S.heat === "max")
+    return `⑥ 火力档位：本局开的是「火力全开」——不留白、不虚写、不切镜头；写到亲密处放慢节奏、写满细节，以感官描写为主线，不许一笔带过，尺度上限就是你所在平台的上限。\n`;
+  if (S && S.heat === "raw")
+    return `⑥ 火力档位：本局开的是「原义档」——写到亲密处不留白、不切镜头、不虚写，直白尽兴。\n`;
+  return `⑥ 火力档位：本局开的是「帐幔档」——把人送到门口，门内留白：亲密处点到即止，靠氛围与暗示收笔。\n`;
 }
 
 function propsScript(props) {
@@ -859,7 +866,7 @@ function newState() {
 }
 
 const HEAT_KEY = "qingyuanqian_heat";
-function heatPref() { return localStorage.getItem(HEAT_KEY) === "raw" ? "raw" : "veil"; }
+function heatPref() { const v = localStorage.getItem(HEAT_KEY); return v === "raw" || v === "max" ? v : "veil"; }
 function setHeat(v) { localStorage.setItem(HEAT_KEY, v); if (S) S.heat = v; renderStart(); }
 
 function shuffle(a) {
@@ -888,6 +895,7 @@ function renderStart() {
       <div class="btn-row" style="margin-bottom:2px">
         <button class="chip${heatPref()==="veil" ? " on" : ""}" onclick="setHeat('veil')">帐幔档 · 门内留白</button>
         <button class="chip${heatPref()==="raw" ? " on" : ""}" onclick="setHeat('raw')">原义档 · 直书其事</button>
+        <button class="chip${heatPref()==="max" ? " on" : ""}" onclick="setHeat('max')">火力全开 · 不设上限</button>
       </div>
     </div>
     <div class="btn-row">
@@ -1087,7 +1095,7 @@ function draw(kind) {
 
 function dealProps() {
   const era = S.worldEra;
-  const pool = S.decks.prop.filter(p => !era || !p.e || p.e === "any" || p.e === era);
+  const pool = S.decks.prop.filter(p => (!era || !p.e || p.e === "any" || p.e === era) && (!p.h || S.heat === "max"));
   const n = Math.min(1 + Math.floor(Math.random() * 3), pool.length);   // 天意赐下 1-3 件，按世界适配
   S.propHand = pool.slice(0, n).map(c => ({ ...c, revealed: false, own: null }));
   S.propIdx = 0;
